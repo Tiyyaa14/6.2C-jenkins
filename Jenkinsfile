@@ -1,74 +1,62 @@
 pipeline {
     agent any
-
+    environment {
+        EMAIL = 'tiyakukar05@gmail.com'
+    }
+    triggers {
+        githubPush() 
+    }
     stages {
         stage('Build') {
             steps {
-                echo 'Building the project...'
-                sh 'echo "Build log contents" > build.log'  // Create a dummy build log
+                echo 'Build stage: Build stage is running.'
             }
         }
-
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests...'
+                echo 'Test stage: Simulating unit and integration tests...'
+            }
+            post {
+                always {
+                    emailext subject: "Test Stage Result: ${currentBuild.currentResult}",
+                             to: "${env.EMAIL}",
+                             attachLog: true,
+                             body: "Test stage completed with status: ${currentBuild.currentResult}"
+                }
             }
         }
-
         stage('Code Analysis') {
             steps {
-                echo 'Performing code analysis...'
+                echo 'Code Analysis stage: Simulating code quality analysis...'
             }
         }
-
         stage('Security Scan') {
             steps {
-                echo 'Running security scan...'
+                echo 'Security Scan stage: Simulating security scan...'
+            }
+            post {
+                always {
+                    emailext subject: "Security Scan Result: ${currentBuild.currentResult}",
+                             to: "${env.EMAIL}",
+                             attachLog: true,
+                             body: "Security scan completed with status: ${currentBuild.currentResult}"
+                }
             }
         }
-
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to Staging environment...'
+                echo 'Deploy to Staging stage: Simulating deployment to staging...'
             }
         }
-
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on Staging...'
+                echo 'Integration Tests on Staging: Simulating integration tests...'
             }
         }
-
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to Production environment...'
+                echo 'Deploy to Production: Simulating deployment to production...'
             }
-        }
-    }
-
-    post {
-        always {
-            script {
-                sh 'cp ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/log build.log || echo "Log file not found"'
-            }
-        }
-        
-        success {
-            emailext(
-                subject: "Jenkins Pipeline Success",
-                body: "The pipeline execution was successful.\n\nPlease find the build log attached.",
-                to: "tiyakukar05@gmail.com",
-                attachmentsPattern: "build.log"
-            )
-        }
-        
-        failure {
-            emailext(
-                subject: "Jenkins Pipeline Failed",
-                body: "The pipeline execution failed.\n\nPlease find the build log attached.",
-                to: "tiyakukar05@gmail.com",
-                attachmentsPattern: "build.log"
-            )
         }
     }
 }
