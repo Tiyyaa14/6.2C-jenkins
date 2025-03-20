@@ -5,6 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
+                sh 'echo "Build log contents" > build.log'  // Create a dummy build log
             }
         }
 
@@ -46,19 +47,27 @@ pipeline {
     }
 
     post {
+        always {
+            script {
+                sh 'cp ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/log build.log || echo "Log file not found"'
+            }
+        }
+        
         success {
             emailext(
                 subject: "Jenkins Pipeline Success",
-                body: "The pipeline execution was successful.",
-                to: "tiyakukar05@gmail.com"
+                body: "The pipeline execution was successful.\n\nPlease find the build log attached.",
+                to: "tiyakukar05@gmail.com",
+                attachmentsPattern: "build.log"
             )
         }
         
         failure {
             emailext(
                 subject: "Jenkins Pipeline Failed",
-                body: "The pipeline execution failed.",
-                to: "tiyakukar05@gmail.com"
+                body: "The pipeline execution failed.\n\nPlease find the build log attached.",
+                to: "tiyakukar05@gmail.com",
+                attachmentsPattern: "build.log"
             )
         }
     }
