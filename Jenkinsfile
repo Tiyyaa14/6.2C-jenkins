@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        EMAIL = 'tiyakukar05@gmail.com'
+        EMAIL = 'simranpreetkaur23105@gmail.com'
     }
     triggers {
         githubPush() 
