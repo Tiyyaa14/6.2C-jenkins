@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Build stage Build stage is running.'
+                echo 'Build stage: Build stage is running.'
             }
         }
         stage('Unit and Integration Tests') {
